@@ -38,7 +38,7 @@
           'webXRMode': GaussianSplats3D.WebXRMode.AR
         });
 
-        let path = 'https://eggman28.github.io/super-splat-view/ply/sign-machinery-compressed.ply';
+        let path = 'assets/splats/sign-machinery.splat';
         await viewer.addSplatScene(path, {
           'rotation': new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0.01933, -0.75830, -0.65161).normalize(), new THREE.Vector3(0, 1, 0)).toArray(),
           'scale': [0.25, 0.25, 0.25],
