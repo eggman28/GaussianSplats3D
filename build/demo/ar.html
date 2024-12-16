@@ -5,6 +5,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
+  <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
   <title>3D Gaussian Splat Demo - VR Garden</title>
   <script type="text/javascript" src="js/util.js"></script>
   <script type="importmap">
@@ -16,34 +18,63 @@
     }
   </script>
   <style>
-
     body {
       background-color: #000000;
       height: 100vh;
       margin: 0px;
     }
-
   </style>
-
 </head>
 
 <body>
   <script type="module">
     import * as GaussianSplats3D from '@mkkellogg/gaussian-splats-3d';
     import * as THREE from 'three';
-    const viewer = new GaussianSplats3D.Viewer({
-      'initialCameraLookAt': [0.20786, -0.68154, -0.27311],
-      'webXRMode': GaussianSplats3D.WebXRMode.AR
-    });
-    let path = 'https://eggman28.github.io/super-splat-view/ply/sign-machinery-compressed.ply';
-    viewer.addSplatScene(path, {
-        'rotation': new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0.01933, -0.75830, -0.65161).normalize(), new THREE.Vector3(0, 1, 0)).toArray(),
-        'scale': [0.25, 0.25, 0.25],
-        'position': [0, 0.5, 0]
-    })
-    .then(() => {
+
+    async function initViewer() {
+      try {
+        const viewer = new GaussianSplats3D.Viewer({
+          'initialCameraLookAt': [0.20786, -0.68154, -0.27311],
+          'webXRMode': GaussianSplats3D.WebXRMode.AR
+        });
+
+        let path = 'https://eggman28.github.io/super-splat-view/ply/sign-machinery-compressed.ply';
+        await viewer.addSplatScene(path, {
+          'rotation': new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0.01933, -0.75830, -0.65161).normalize(), new THREE.Vector3(0, 1, 0)).toArray(),
+          'scale': [0.25, 0.25, 0.25],
+          'position': [0, 0.5, 0]
+        });
+
         viewer.start();
-    });
+      } catch (error) {
+        console.error('Error initializing viewer:', error);
+        // Display error to user
+        const errorDiv = document.createElement('div');
+        errorDiv.style.color = 'white';
+        errorDiv.style.padding = '20px';
+        errorDiv.style.position = 'fixed';
+        errorDiv.style.top = '50%';
+        errorDiv.style.left = '50%';
+        errorDiv.style.transform = 'translate(-50%, -50%)';
+        errorDiv.innerHTML = `Error: ${error.message}<br>Please ensure your browser supports SharedArrayBuffer and cross-origin isolation.`;
+        document.body.appendChild(errorDiv);
+      }
+    }
+
+    // Check for SharedArrayBuffer support
+    if (typeof SharedArrayBuffer === 'undefined') {
+      const errorDiv = document.createElement('div');
+      errorDiv.style.color = 'white';
+      errorDiv.style.padding = '20px';
+      errorDiv.style.position = 'fixed';
+      errorDiv.style.top = '50%';
+      errorDiv.style.left = '50%';
+      errorDiv.style.transform = 'translate(-50%, -50%)';
+      errorDiv.innerHTML = 'Error: Your browser does not support SharedArrayBuffer.<br>Please use a modern browser with cross-origin isolation enabled.';
+      document.body.appendChild(errorDiv);
+    } else {
+      initViewer();
+    }
   </script>
 </body>
 
